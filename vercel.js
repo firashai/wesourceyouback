@@ -53,15 +53,15 @@ const { AppModule } = require('./dist/app.module');
 
 let cachedServer;
 
-async function bootstrap() {
+async function bootstrapServer() {
   const app = await NestFactory.create(AppModule);
-  await app.init();
+  await app.listen(process.env.PORT || 3000);
   return serverless(app.getHttpAdapter().getInstance());
 }
 
 module.exports.handler = async (event, context) => {
   if (!cachedServer) {
-    cachedServer = await bootstrap();
+    cachedServer = await bootstrapServer();
   }
   return cachedServer(event, context);
 };
