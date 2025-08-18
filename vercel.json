@@ -21,8 +21,7 @@
   "functions": {
     "vercel.js": {
       "memory": 3008,
-      "maxDuration": 30,
-      "shouldAddHelpers": false
+      "maxDuration": 30
     }
   }
 }

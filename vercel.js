@@ -55,9 +55,9 @@ let cachedServer;
 
 async function bootstrapServer() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT || 3000);
+  await app.init(); // Changed from listen() to init() for serverless
   return serverless(app.getHttpAdapter().getInstance());
-};
+}
 
 module.exports.handler = async (event, context) => {
   if (!cachedServer) {
