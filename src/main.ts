@@ -5,8 +5,6 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-const serverless = require('serverless-http');
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -35,15 +33,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  return serverless(app.getHttpAdapter().getInstance());
-
-  //await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 3000);
 }
-let server;
-module.exports = async (req, res) => {
-  if (!server) {
-    server = await bootstrap();
-  }
-  return server(req, res);
-};
-////bootstrap();
+bootstrap();
