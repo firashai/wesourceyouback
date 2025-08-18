@@ -49,11 +49,11 @@
 
 const { NestFactory } = require('@nestjs/core');
 const serverless = require('serverless-http');
-const { AppModule } = require('./dist/app.module'); // Make sure this path matches your build output
+const { AppModule } = require('./dist/app.module');
 
 let cachedServer;
 
-async function bootstrapServer() {
+async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await app.init();
   return serverless(app.getHttpAdapter().getInstance());
@@ -61,7 +61,7 @@ async function bootstrapServer() {
 
 module.exports.handler = async (event, context) => {
   if (!cachedServer) {
-    cachedServer = await bootstrapServer();
+    cachedServer = await bootstrap();
   }
   return cachedServer(event, context);
 };
