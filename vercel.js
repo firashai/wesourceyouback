@@ -53,15 +53,26 @@ const { AppModule } = require('./dist/app.module');
 
 let cachedServer;
 
-async function bootstrapServer() {
-  const app = await NestFactory.create(AppModule);
-  await app.init(); // Changed from listen() to init() for serverless
-  return serverless(app.getHttpAdapter().getInstance());
+async function bootstrap() {
+  try {
+    const app = await NestFactory.create(AppModule);
+    
+    // Enable CORS if needed (recommended for APIs)
+    app.enableCors();
+    
+    // Initialize the application (but don't call listen())
+    await app.init();
+    
+    return serverless(app.getHttpAdapter().getInstance());
+  } catch (error) {
+    console.error('NestJS initialization failed:', error);
+    throw error;
+  }
 }
 
 module.exports.handler = async (event, context) => {
   if (!cachedServer) {
-    cachedServer = await bootstrapServer();
+    cachedServer = await bootstrap();
   }
   return cachedServer(event, context);
 };
