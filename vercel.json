@@ -5,10 +5,7 @@
       "src": "vercel.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": [
-          "dist/**",
-          "node_modules/**"
-        ]
+        "includeFiles": ["dist/**"]
       }
     }
   ],
@@ -17,5 +14,11 @@
       "src": "/(.*)",
       "dest": "vercel.js"
     }
-  ]
+  ],
+  "functions": {
+    "vercel.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }
