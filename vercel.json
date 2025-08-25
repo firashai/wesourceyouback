@@ -18,11 +18,5 @@
       "src": "/(.*)",
       "dest": "vercel.js"
     }
-  ],
-  "functions": {
-    "vercel.js": {
-      "memory": 3008,
-      "maxDuration": 30
-    }
-  }
+  ]
 }
