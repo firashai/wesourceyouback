@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
+import express from 'express';
 
 const server = express();
 
-async function bootstrap() {
+async function createApp() {
   const app = await NestFactory.create(
     AppModule,
     new ExpressAdapter(server)
@@ -17,5 +17,10 @@ async function bootstrap() {
   return server;
 }
 
-// Export the server for Vercel
-export default bootstrap().then(app => app);
+// Create and export the app
+const appPromise = createApp();
+
+export default async (req: any, res: any) => {
+  const app = await appPromise;
+  return app(req, res);
+};
