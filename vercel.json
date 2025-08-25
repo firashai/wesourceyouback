@@ -18,5 +18,10 @@
       "src": "/(.*)",
       "dest": "vercel.js"
     }
-  ]
+  ],
+  "functions": {
+    "api/*.js": {
+      "runtime": "@vercel/node@1"
+    }
+  }
 }
