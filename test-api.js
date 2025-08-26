@@ -1,7 +1,7 @@
 const https = require('https');
 
 // Replace with your actual Vercel deployment URL
-const BASE_URL = 'https://media-brokerage-49zx5xjc5-firashaidars-projects.vercel.app';
+const BASE_URL = 'https://media-brokerage-rjjct7lch-firashaidars-projects.vercel.app';
 
 function makeRequest(method, path, data = null, headers = {}) {
   return new Promise((resolve, reject) => {
