@@ -18,12 +18,6 @@ app.use((req, res, next) => {
   }
 });
 
-// Debug middleware
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
-  next();
-});
-
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({
@@ -74,14 +68,6 @@ app.post('/auth/login', (req, res) => {
     message: 'Login endpoint - requires database setup',
     status: 'mock',
     data: req.body
-  });
-});
-
-app.get('/auth/login', (req, res) => {
-  res.json({
-    message: 'Login endpoint (GET) - requires database setup',
-    status: 'mock',
-    note: 'This endpoint is typically accessed via POST with credentials'
   });
 });
 
