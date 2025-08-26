@@ -4,7 +4,7 @@
   "description": "Media brokerage platform",
   "main": "dist/main.js",
   "scripts": {
-    "build": "nest build && cp package.json dist/",
+    "build": "nest build && copy package.json dist\\",
     "vercel-build": "npm install && npm run build",
     "start": "nest start",
     "start:dev": "nest start --watch",
