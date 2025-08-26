@@ -1,7 +1,8 @@
 const https = require('https');
+const http = require('http');
 
-// Replace with your actual Vercel deployment URL
-const BASE_URL = 'https://media-brokerage-kfho09866-firashaidars-projects.vercel.app';
+// Local server URL
+const BASE_URL = 'http://localhost:3000';
 
 function makeRequest(method, path, data = null, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -9,7 +10,7 @@ function makeRequest(method, path, data = null, headers = {}) {
     
     const options = {
       hostname: url.hostname,
-      port: 443,
+      port: url.port,
       path: url.pathname + url.search,
       method: method,
       headers: {
@@ -18,7 +19,7 @@ function makeRequest(method, path, data = null, headers = {}) {
       }
     };
 
-    const req = https.request(options, (res) => {
+    const req = http.request(options, (res) => {
       let body = '';
       res.on('data', (chunk) => {
         body += chunk;
@@ -53,8 +54,8 @@ function makeRequest(method, path, data = null, headers = {}) {
   });
 }
 
-async function testAPI() {
-  console.log('🚀 Testing Media Brokerage API...\n');
+async function testLocalAPI() {
+  console.log('🚀 Testing Local Media Brokerage API...\n');
   console.log(`📍 Testing URL: ${BASE_URL}\n`);
 
   const tests = [
@@ -153,10 +154,14 @@ async function testAPI() {
 
   if (failedTests === 0) {
     console.log('\n🎉 All tests passed! Your API is working perfectly!');
+    console.log('\n📋 Next Steps:');
+    console.log('   1. Disable deployment protection in Vercel dashboard');
+    console.log('   2. Redeploy to Vercel: npx vercel --prod --yes');
+    console.log('   3. Test the deployed version');
   } else {
     console.log('\n⚠️  Some tests failed. Check the responses above for details.');
   }
 }
 
 // Run the test
-testAPI().catch(console.error);
+testLocalAPI().catch(console.error);
