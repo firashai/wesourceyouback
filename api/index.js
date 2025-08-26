@@ -30,7 +30,9 @@ app.get('/health', (req, res) => {
     status: 'success',
     message: 'Media Brokerage API is running!',
     timestamp: new Date().toISOString(),
-    version: '2.0.0'
+    version: '2.0.0',
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -63,31 +65,46 @@ app.get('/api', (req, res) => {
 
 // Users endpoints
 app.get('/users', (req, res) => {
+  const users = [
+    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'admin', status: 'active' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'user', status: 'active' },
+    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'editor', status: 'active' }
+  ];
+  
   res.json({
-    message: 'Users endpoint - GET',
+    message: 'Users retrieved successfully',
     status: 'success',
-    data: {
-      users: [
-        { id: 1, name: 'John Doe', email: 'john@example.com', role: 'admin' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'user' },
-        { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'editor' }
-      ],
-      total: 3
-    },
+    data: { users, total: users.length },
     timestamp: new Date().toISOString()
   });
 });
 
 app.post('/users', (req, res) => {
   const userData = req.body;
+  
+  if (!userData.name || !userData.email) {
+    res.status(400).json({
+      message: 'User creation failed',
+      status: 'error',
+      error: 'Name and email are required',
+      timestamp: new Date().toISOString()
+    });
+    return;
+  }
+  
+  const newUser = {
+    id: Math.floor(Math.random() * 1000) + 1,
+    name: userData.name,
+    email: userData.email,
+    role: userData.role || 'user',
+    status: 'active',
+    createdAt: new Date().toISOString()
+  };
+  
   res.json({
     message: 'User created successfully',
     status: 'success',
-    data: {
-      id: Math.floor(Math.random() * 1000) + 1,
-      ...userData,
-      createdAt: new Date().toISOString()
-    },
+    data: newUser,
     timestamp: new Date().toISOString()
   });
 });
@@ -106,28 +123,42 @@ app.get('/auth/login', (req, res) => {
 app.post('/auth/login', (req, res) => {
   const { email, password } = req.body;
   
+  if (!email || !password) {
+    res.status(400).json({
+      message: 'Login failed',
+      status: 'error',
+      error: 'Email and password are required',
+      timestamp: new Date().toISOString()
+    });
+    return;
+  }
+  
   // Mock authentication
-  if (email && password) {
+  const mockUsers = [
+    { email: 'admin@example.com', password: 'admin123', name: 'Admin User', role: 'admin', id: 1 },
+    { email: 'user@example.com', password: 'user123', name: 'Regular User', role: 'user', id: 2 }
+  ];
+  
+  const user = mockUsers.find(u => u.email === email && u.password === password);
+  
+  if (user) {
+    const token = 'mock-jwt-token-' + Math.random().toString(36).substr(2, 9);
+    
     res.json({
       message: 'Login successful',
       status: 'success',
       data: {
-        user: {
-          id: 1,
-          email: email,
-          name: 'Authenticated User',
-          role: 'user'
-        },
-        token: 'mock-jwt-token-' + Math.random().toString(36).substr(2, 9),
+        user: { id: user.id, email: user.email, name: user.name, role: user.role },
+        token: token,
         expiresIn: '24h'
       },
       timestamp: new Date().toISOString()
     });
   } else {
-    res.status(400).json({
+    res.status(401).json({
       message: 'Login failed',
       status: 'error',
-      error: 'Email and password are required',
+      error: 'Invalid email or password',
       timestamp: new Date().toISOString()
     });
   }
@@ -135,52 +166,49 @@ app.post('/auth/login', (req, res) => {
 
 // Content endpoint
 app.get('/content', (req, res) => {
+  const content = [
+    { id: 1, title: 'Sample Article', type: 'article', status: 'published', author: 'John Doe' },
+    { id: 2, title: 'Video Content', type: 'video', status: 'draft', author: 'Jane Smith' },
+    { id: 3, title: 'Image Gallery', type: 'gallery', status: 'published', author: 'Bob Johnson' }
+  ];
+  
   res.json({
-    message: 'Content endpoint',
+    message: 'Content retrieved successfully',
     status: 'success',
-    data: {
-      content: [
-        { id: 1, title: 'Sample Article', type: 'article', status: 'published' },
-        { id: 2, title: 'Video Content', type: 'video', status: 'draft' },
-        { id: 3, title: 'Image Gallery', type: 'gallery', status: 'published' }
-      ],
-      total: 3
-    },
+    data: { content, total: content.length },
     timestamp: new Date().toISOString()
   });
 });
 
 // Projects endpoint
 app.get('/projects', (req, res) => {
+  const projects = [
+    { id: 1, name: 'Website Redesign', status: 'in-progress', client: 'ABC Corp', progress: 65 },
+    { id: 2, name: 'Mobile App Development', status: 'completed', client: 'XYZ Inc', progress: 100 },
+    { id: 3, name: 'Brand Identity', status: 'planning', client: 'Startup Co', progress: 15 }
+  ];
+  
   res.json({
-    message: 'Projects endpoint',
+    message: 'Projects retrieved successfully',
     status: 'success',
-    data: {
-      projects: [
-        { id: 1, name: 'Website Redesign', status: 'in-progress', client: 'ABC Corp' },
-        { id: 2, name: 'Mobile App Development', status: 'completed', client: 'XYZ Inc' },
-        { id: 3, name: 'Brand Identity', status: 'planning', client: 'Startup Co' }
-      ],
-      total: 3
-    },
+    data: { projects, total: projects.length },
     timestamp: new Date().toISOString()
   });
 });
 
 // Media types endpoint
 app.get('/media-types', (req, res) => {
+  const mediaTypes = [
+    { id: 1, name: 'Video', description: 'Video content', extensions: ['mp4', 'avi', 'mov'] },
+    { id: 2, name: 'Image', description: 'Image content', extensions: ['jpg', 'png', 'gif'] },
+    { id: 3, name: 'Audio', description: 'Audio content', extensions: ['mp3', 'wav', 'aac'] },
+    { id: 4, name: 'Document', description: 'Document content', extensions: ['pdf', 'doc', 'txt'] }
+  ];
+  
   res.json({
-    message: 'Media types endpoint',
+    message: 'Media types retrieved successfully',
     status: 'success',
-    data: {
-      mediaTypes: [
-        { id: 1, name: 'Video', description: 'Video content', extensions: ['mp4', 'avi', 'mov'] },
-        { id: 2, name: 'Image', description: 'Image content', extensions: ['jpg', 'png', 'gif'] },
-        { id: 3, name: 'Audio', description: 'Audio content', extensions: ['mp3', 'wav', 'aac'] },
-        { id: 4, name: 'Document', description: 'Document content', extensions: ['pdf', 'doc', 'txt'] }
-      ],
-      total: 4
-    },
+    data: { mediaTypes, total: mediaTypes.length },
     timestamp: new Date().toISOString()
   });
 });
@@ -201,16 +229,6 @@ app.get('/', (req, res) => {
       projects: '/projects',
       mediaTypes: '/media-types'
     },
-    features: [
-      'Complete user management',
-      'Authentication system',
-      'Content management',
-      'Project tracking',
-      'Media type categorization',
-      'CORS enabled',
-      'JSON responses',
-      'Error handling'
-    ],
     timestamp: new Date().toISOString()
   });
 });
