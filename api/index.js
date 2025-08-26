@@ -124,6 +124,12 @@ app.get('/', (req, res) => {
   });
 });
 
+// Export for Vercel serverless function
+module.exports = (req, res) => {
+  // Handle Vercel serverless function
+  return app(req, res);
+};
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
@@ -142,4 +148,8 @@ app.use('*', (req, res) => {
   });
 });
 
-module.exports = app;
+// Export for Vercel serverless function
+module.exports = (req, res) => {
+  // Handle Vercel serverless function
+  return app(req, res);
+};
